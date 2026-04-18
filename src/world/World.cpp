@@ -1,0 +1,160 @@
+#include "./World.hpp"
+#include <math.h>
+
+World::World(Camera2D &c) : c(c)
+{
+    player = std::make_unique<Player>();
+}
+
+void World::generate(Vector2 RT, Vector2 LB, int seed)
+{
+    for (int x = RT.x; x <= LB.x; x++)
+    {
+        int surface = (WORLD_SIZE / 2) + (10 * sinf(x * 0.051f + seed)) + ((5 * sinf(x * 0.151f + seed)));
+
+        for (int y = RT.y; y <= LB.y; y++)
+        {
+            if (blocos[y][x] != nullptr)
+            {
+                continue;
+            }
+
+            std::unique_ptr<Bloco> b;
+
+            if (y == surface)
+            {
+                b = std::make_unique<Bloco>(BlockType::GRAMA);
+            }
+            else if (y > surface + (WORLD_SIZE / 4) / 2)
+            {
+                b = std::make_unique<Bloco>(BlockType::PEDRA);
+            }
+            else if (y > surface)
+            {
+                b = std::make_unique<Bloco>(BlockType::TERRA);
+            }
+            else
+            {
+                b = std::make_unique<Bloco>(BlockType::AR);
+            }
+            blocos[y][x] = std::move(b);
+        }
+    }
+}
+void World::update()
+{
+    float dt = GetFrameTime();
+    posMap1 = {0, 0};
+    posMap1 = GetScreenToWorld2D(posMap1, c);
+    posMap1 = {posMap1.x / BLOCK_SIZE, posMap1.y / BLOCK_SIZE};
+
+    posMap2 = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+    posMap2 = GetScreenToWorld2D(posMap2, c);
+    posMap2 = {posMap2.x / BLOCK_SIZE, posMap2.y / BLOCK_SIZE};
+
+    if (posMap1.x < 0)
+    {
+        posMap1.x = 0;
+    }
+    if (posMap1.x >= WORLD_SIZE)
+    {
+        posMap1.x = WORLD_SIZE - 1;
+    }
+    if (posMap1.y < 0)
+    {
+        posMap1.y = 0;
+    }
+    if (posMap1.y >= WORLD_SIZE)
+    {
+        posMap1.y = WORLD_SIZE - 1;
+    }
+
+    if (posMap2.x < 0)
+    {
+        posMap2.x = 0;
+    }
+    if (posMap2.x >= WORLD_SIZE)
+    {
+        posMap2.x = WORLD_SIZE - 1;
+    }
+    if (posMap2.y < 0)
+    {
+        posMap2.y = 0;
+    }
+    if (posMap2.y >= WORLD_SIZE)
+    {
+        posMap2.y = WORLD_SIZE - 1;
+    }
+
+    generate(posMap1, posMap2, 2000);
+
+    player->update(posMap1, posMap2, blocos, c, itens);
+    c.target = player->pos;
+
+    for (const auto &i : itens)
+    {
+
+        i->life -= dt;
+
+        if (!(i->pos.x / BLOCK_SIZE >= posMap1.x && i->pos.x / BLOCK_SIZE <= posMap2.x))
+        {
+            continue;
+        }
+
+        if (!(i->pos.y / BLOCK_SIZE >= posMap1.y && i->pos.y / BLOCK_SIZE <= posMap2.y))
+        {
+            continue;
+        }
+
+        for (int x = posMap1.x; x <= posMap2.x; x++)
+        {
+            for (int y = posMap1.y; y <= posMap2.y; y++)
+            {
+                if (blocos[y][x] == nullptr || !blocos[y][x]->desenhavel)
+                {
+                    continue;
+                }
+
+                if (CheckCollisionRecs({(float)x * BLOCK_SIZE, (float)y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}))
+                {
+                    i->pos.y--;
+                }
+                else
+                {
+                    i->pos.y += 1 * dt;
+                }
+            }
+        }
+    }
+}
+
+void World::draw()
+{
+    player->draw();
+
+    for (int x = posMap1.x; x <= posMap2.x; x++)
+    {
+        for (int y = posMap1.y; y <= posMap2.y; y++)
+        {
+            if (blocos[y][x] == nullptr)
+            {
+                continue;
+            }
+
+            if (blocos[y][x]->desenhavel)
+            {
+                DrawTexture(blocos[y][x]->textura, x * BLOCK_SIZE, y * BLOCK_SIZE, WHITE);
+            }
+        }
+    }
+
+    for (const auto &i : itens)
+    {
+        DrawTexturePro(i->textura, {0, 0, 32, 32}, {i->pos.x, i->pos.y, 16, 16}, {0, 0}, 0, WHITE);
+    }
+}
+
+void World::beginDraw()
+{
+    player->beginDraw();
+}

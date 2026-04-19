@@ -14,6 +14,6 @@ Iten::Iten(ItenType t) : tipo(t)
         textura = Texturas::pedra;
         break;
     }
-    life = 5000;
+    life = 500;
     quantidade = 1;
 };

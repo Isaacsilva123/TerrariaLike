@@ -5,9 +5,6 @@ Inventario::Inventario()
     textura = Texturas::inventario;
     selected = Texturas::selected;
     state = 0;
-    std::unique_ptr<Iten> i = std::make_unique<Iten>(ItenType::TERRA);
-    i->quantidade = 20;
-    itens[1] = std::move(i);
 }
 
 bool Inventario::isNull()

@@ -23,24 +23,58 @@ void World::generate(Vector2 RT, Vector2 LB, int seed)
 
             if (y == surface)
             {
-                b = std::make_unique<Bloco>(BlockType::GRAMA);
+                b = std::make_unique<Bloco>(Type::GRAMA);
+                if ((x * 7 + seed * 13) % 50 == 0)
+                {
+                    generateThrees({(float)x, (float)y});
+                }
             }
-            else if (y > surface + (WORLD_SIZE / 4) / 2)
+            else if (y > surface + 7)
             {
-                b = std::make_unique<Bloco>(BlockType::PEDRA);
+                b = std::make_unique<Bloco>(Type::PEDRA);
             }
             else if (y > surface)
             {
-                b = std::make_unique<Bloco>(BlockType::TERRA);
+                b = std::make_unique<Bloco>(Type::TERRA);
             }
             else
             {
-                b = std::make_unique<Bloco>(BlockType::AR);
+                b = std::make_unique<Bloco>(Type::AR);
             }
             blocos[y][x] = std::move(b);
         }
     }
 }
+
+void World::generateThrees(Vector2 initial_point)
+{
+    for (size_t i = 0; i < 7; i++)
+    {
+        if (initial_point.y - 1 - i > 0)
+        {
+            blocos[(int)initial_point.y - 1 - i][(int)initial_point.x] = std::make_unique<Bloco>(Type::TRONCO);
+        }
+    }
+    if (initial_point.y - 8 > 0)
+    {
+        blocos[(int)initial_point.y - 8][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
+
+        if (initial_point.y - 9 > 0)
+        {
+            blocos[(int)initial_point.y - 9][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
+        }
+
+        if (initial_point.x - 1 > 0)
+        {
+            blocos[(int)initial_point.y - 8][(int)initial_point.x - 1] = std::make_unique<Bloco>(Type::FOLHA);
+        }
+        if (initial_point.x + 1 < WORLD_SIZE)
+        {
+            blocos[(int)initial_point.y - 8][(int)initial_point.x + 1] = std::make_unique<Bloco>(Type::FOLHA);
+        }
+    }
+}
+
 void World::update()
 {
     float dt = GetFrameTime();
@@ -106,22 +140,28 @@ void World::update()
             continue;
         }
 
-        for (int x = posMap1.x; x <= posMap2.x; x++)
+        int blockX = (int)(i->pos.x / BLOCK_SIZE);
+        int blockYStart = (int)(i->pos.y / BLOCK_SIZE);
+
+        if (blockX >= posMap1.x && blockX <= posMap2.x)
         {
-            for (int y = posMap1.y; y <= posMap2.y; y++)
+            for (int y = blockYStart; y <= posMap2.y; y++)
             {
-                if (blocos[y][x] == nullptr || !blocos[y][x]->desenhavel)
+                if (y < posMap1.y || blocos[y][blockX] == nullptr || !blocos[y][blockX]->desenhavel)
                 {
                     continue;
                 }
 
-                if (CheckCollisionRecs({(float)x * BLOCK_SIZE, (float)y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}))
+                float blockPosX = (float)blockX * BLOCK_SIZE;
+                float blockPosY = (float)y * BLOCK_SIZE;
+
+                if (CheckCollisionRecs({blockPosX, blockPosY, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}))
                 {
                     i->pos.y--;
                 }
                 else
                 {
-                    i->pos.y += 1 * dt;
+                    i->pos.y += 30 * dt;
                 }
             }
         }

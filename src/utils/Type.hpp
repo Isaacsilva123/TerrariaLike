@@ -1,10 +1,13 @@
 #pragma once
 #define BLOCK_SIZE 32
 
-enum class BlockType
+enum class Type
 {
     AR,
     TERRA,
     GRAMA,
-    PEDRA
+    PEDRA,
+    TRONCO,
+    TABUA,
+    FOLHA
 };

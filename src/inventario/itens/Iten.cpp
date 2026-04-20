@@ -1,19 +1,28 @@
 #include "./Iten.hpp"
 
-Iten::Iten(ItenType t) : tipo(t)
+Iten::Iten(Type t) : tipo(t)
 {
     switch (t)
     {
-    case ItenType::TERRA:
+    case Type::TERRA:
         textura = Texturas::terra;
         break;
-    case ItenType::GRAMA:
+    case Type::GRAMA:
         textura = Texturas::grama;
         break;
-    case ItenType::PEDRA:
+    case Type::PEDRA:
         textura = Texturas::pedra;
         break;
+    case Type::TRONCO:
+        textura = Texturas::tronco;
+        break;
+    case Type::TABUA:
+        textura = Texturas::tabua;
+        break;
+    case Type::FOLHA:
+        textura = Texturas::folha;
+        break;
     }
-    life = 500;
+    life = 300;
     quantidade = 1;
 };

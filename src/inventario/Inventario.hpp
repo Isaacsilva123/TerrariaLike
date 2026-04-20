@@ -14,8 +14,8 @@ private:
 public:
     Inventario();
     bool isNull();
-    bool adicionarItem(ItenType t);
-    ItenType botarIten();
+    bool adicionarItem(Type t);
+    Type botarIten();
     void draw();
     void update();
 };

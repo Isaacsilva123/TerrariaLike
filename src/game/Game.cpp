@@ -11,7 +11,6 @@ Game::Game()
     camera.zoom = 1.f;
 
     world = std::make_unique<World>(camera);
-    // world->generate(rand() % 200000);
 }
 
 void Game::update()

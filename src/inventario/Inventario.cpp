@@ -16,7 +16,7 @@ bool Inventario::isNull()
     return false;
 }
 
-bool Inventario::adicionarItem(ItenType t)
+bool Inventario::adicionarItem(Type t)
 {
     for (int i = 0; i < 10; i++)
     {
@@ -42,11 +42,11 @@ bool Inventario::adicionarItem(ItenType t)
     return false;
 }
 
-ItenType Inventario::botarIten()
+Type Inventario::botarIten()
 {
     if (itens[state] == nullptr)
     {
-        return ItenType::NULLA;
+        return Type::AR;
     }
 
     itens[state]->quantidade--;

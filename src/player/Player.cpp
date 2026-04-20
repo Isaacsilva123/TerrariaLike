@@ -74,21 +74,9 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
             BL[(int)mouseBlock.y][(int)mouseBlock.x]->rigidez -= force * dt;
             if (BL[(int)mouseBlock.y][(int)mouseBlock.x]->rigidez < 0)
             {
-                if (ITS.size() <= 255)
+                if (ITS.size() <= 40)
                 {
-                    ItenType tipo;
-                    switch (BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo)
-                    {
-                    case BlockType::GRAMA:
-                        tipo = ItenType::GRAMA;
-                        break;
-                    case BlockType::TERRA:
-                        tipo = ItenType::TERRA;
-                        break;
-                    case BlockType::PEDRA:
-                        tipo = ItenType::PEDRA;
-                        break;
-                    }
+                    Type tipo = BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo;
 
                     std::unique_ptr<Iten> iten = std::make_unique<Iten>(tipo);
                     iten->pos = {(float)((int)mouseBlock.x * BLOCK_SIZE + 8), (float)((int)mouseBlock.y * BLOCK_SIZE + 8)};
@@ -96,7 +84,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
                 }
 
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->desenhavel = false;
-                BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo = BlockType::AR;
+                BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo = Type::AR;
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->textura = {};
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->rigidez = 0;
             }
@@ -114,22 +102,9 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
             {
                 if (mouseBlock.x >= 0 && mouseBlock.x < WORLD_SIZE && mouseBlock.y >= 0 && mouseBlock.y < WORLD_SIZE && !BL[(int)mouseBlock.y][(int)mouseBlock.x]->desenhavel && !inventario->isNull())
                 {
-                    ItenType t = inventario->botarIten();
+                    Type t = inventario->botarIten();
 
-                    BlockType tipo;
-                    switch (t)
-                    {
-                    case ItenType::GRAMA:
-                        tipo = BlockType::GRAMA;
-                        break;
-                    case ItenType::TERRA:
-                        tipo = BlockType::TERRA;
-                        break;
-                    case ItenType::PEDRA:
-                        tipo = BlockType::PEDRA;
-                        break;
-                    }
-                    BL[(int)mouseBlock.y][(int)mouseBlock.x] = std::make_unique<Bloco>(tipo);
+                    BL[(int)mouseBlock.y][(int)mouseBlock.x] = std::make_unique<Bloco>(t);
                 }
             }
         }

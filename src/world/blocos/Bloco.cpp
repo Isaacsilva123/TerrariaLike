@@ -1,28 +1,45 @@
 #include "./Bloco.hpp"
 
-Bloco::Bloco(BlockType b) : tipo(b)
+Bloco::Bloco(Type b) : tipo(b)
 {
     desenhavel = true;
 
     switch (tipo)
     {
-    case BlockType::AR:
+    case Type::AR:
         desenhavel = false;
         break;
 
-    case BlockType::TERRA:
+    case Type::TERRA:
         textura = Texturas::terra;
         rigidez = .5f;
         break;
 
-    case BlockType::GRAMA:
+    case Type::GRAMA:
         textura = Texturas::grama;
         rigidez = 2.f;
         break;
 
-    case BlockType::PEDRA:
+    case Type::PEDRA:
         textura = Texturas::pedra;
         rigidez = 2.5f;
+        break;
+
+        
+    case Type::TRONCO:
+        textura = Texturas::tronco;
+        rigidez = 4.f;
+        break;
+
+        
+    case Type::TABUA:
+        textura = Texturas::tabua;
+        rigidez = 2.5f;
+        break;
+        
+    case Type::FOLHA:
+        textura = Texturas::folha;
+        rigidez = .5f;
         break;
     }
 };

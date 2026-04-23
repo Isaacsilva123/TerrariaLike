@@ -7,11 +7,13 @@
 class Inventario : public InterfaceDU
 {
 private:
-    Texture2D textura;
-    Texture2D selected;
-    std::unique_ptr<Iten> itens[10];
-    int state;
+    Texture2D textura, selected, outroInventario;
+    std::unique_ptr<Iten> itens[50];
+    int state, dragIndex;
+    Vector2 dragPos;
+
 public:
+    bool estaAberto;
     Inventario();
     bool isNull();
     bool adicionarItem(Type t);

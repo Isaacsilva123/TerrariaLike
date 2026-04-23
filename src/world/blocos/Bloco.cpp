@@ -3,6 +3,7 @@
 Bloco::Bloco(Type b) : tipo(b)
 {
     desenhavel = true;
+    comColisão = true;
 
     switch (tipo)
     {
@@ -29,6 +30,7 @@ Bloco::Bloco(Type b) : tipo(b)
     case Type::TRONCO:
         textura = Texturas::tronco;
         rigidez = 4.f;
+        comColisão = false;
         break;
 
         

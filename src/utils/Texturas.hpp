@@ -13,6 +13,7 @@ public:
     static Texture2D tronco;
     static Texture2D folha;
     static Texture2D tabua;
+    static Texture2D inventarioSlot;
     static void LoadALL();
     static void UnloadALL();
 };

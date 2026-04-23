@@ -9,6 +9,7 @@ Texture2D Texturas::selected{};
 Texture2D Texturas::tronco{};
 Texture2D Texturas::folha{};
 Texture2D Texturas::tabua{};
+Texture2D Texturas::inventarioSlot{};
 
 void Texturas::LoadALL(){
     terra = LoadTexture("./src/textures/terra.png");
@@ -20,6 +21,7 @@ void Texturas::LoadALL(){
     tronco = LoadTexture("./src/textures/troncoDeMadeira.png");
     folha = LoadTexture("./src/textures/folha.png");
     tabua = LoadTexture("./src/textures/tabuasDeMadeira.png");
+    inventarioSlot = LoadTexture("./src/textures/inventarioSlot.png");
 }
 
 void Texturas::UnloadALL(){
@@ -28,4 +30,8 @@ void Texturas::UnloadALL(){
     UnloadTexture(pedra);
     UnloadTexture(inventario);
     UnloadTexture(selected);
+    UnloadTexture(tronco);
+    UnloadTexture(folha);
+    UnloadTexture(tabua);
+    UnloadTexture(inventarioSlot);
 }

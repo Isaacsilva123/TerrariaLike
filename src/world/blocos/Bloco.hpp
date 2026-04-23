@@ -8,6 +8,6 @@ public:
     Type tipo;
     Texture2D textura;
     float rigidez;
-    bool desenhavel;
+    bool desenhavel, comColisão;
     Bloco(Type t);
 };

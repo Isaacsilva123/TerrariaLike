@@ -1,9 +1,12 @@
 #include "./World.hpp"
 #include <math.h>
+#include <cstdlib>
+#include <ctime>
 
 World::World(Camera2D &c) : c(c)
 {
     player = std::make_unique<Player>();
+    srand(time(0));
 }
 
 void World::generate(Vector2 RT, Vector2 LB, int seed)
@@ -26,7 +29,16 @@ void World::generate(Vector2 RT, Vector2 LB, int seed)
                 b = std::make_unique<Bloco>(Type::GRAMA);
                 if ((x * 7 + seed * 13) % 50 == 0)
                 {
-                    generateThrees({(float)x, (float)y});
+                    int t = 0;
+                    if ((x * 7 + seed * 13) % 3)
+                    {
+                        t = 9;
+                    }else if ((x * 7 + seed * 13) % 7)
+                    {
+                        t = 20;
+                    }                    
+                    
+                    generateThrees({(float)x, (float)y}, t);
                 }
             }
             else if (y > surface + 7)
@@ -46,31 +58,31 @@ void World::generate(Vector2 RT, Vector2 LB, int seed)
     }
 }
 
-void World::generateThrees(Vector2 initial_point)
+void World::generateThrees(Vector2 initial_point, int tamanho)
 {
-    for (size_t i = 0; i < 7; i++)
+    for (size_t i = 0; i < tamanho; i++)
     {
         if (initial_point.y - 1 - i > 0)
         {
             blocos[(int)initial_point.y - 1 - i][(int)initial_point.x] = std::make_unique<Bloco>(Type::TRONCO);
         }
     }
-    if (initial_point.y - 8 > 0)
+    if (initial_point.y - (tamanho + 1) > 0)
     {
-        blocos[(int)initial_point.y - 8][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
+        blocos[(int)initial_point.y - (tamanho + 1)][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
 
-        if (initial_point.y - 9 > 0)
+        if (initial_point.y - (tamanho + 2) > 0)
         {
-            blocos[(int)initial_point.y - 9][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
+            blocos[(int)initial_point.y - (tamanho + 2)][(int)initial_point.x] = std::make_unique<Bloco>(Type::FOLHA);
         }
 
         if (initial_point.x - 1 > 0)
         {
-            blocos[(int)initial_point.y - 8][(int)initial_point.x - 1] = std::make_unique<Bloco>(Type::FOLHA);
+            blocos[(int)initial_point.y - (tamanho + 1)][(int)initial_point.x - 1] = std::make_unique<Bloco>(Type::FOLHA);
         }
         if (initial_point.x + 1 < WORLD_SIZE)
         {
-            blocos[(int)initial_point.y - 8][(int)initial_point.x + 1] = std::make_unique<Bloco>(Type::FOLHA);
+            blocos[(int)initial_point.y - (tamanho + 1)][(int)initial_point.x + 1] = std::make_unique<Bloco>(Type::FOLHA);
         }
     }
 }
@@ -147,7 +159,7 @@ void World::update()
         {
             for (int y = blockYStart; y <= posMap2.y; y++)
             {
-                if (y < posMap1.y || blocos[y][blockX] == nullptr || !blocos[y][blockX]->desenhavel)
+                if (y < posMap1.y || !blocos[y][blockX]->desenhavel)
                 {
                     continue;
                 }
@@ -155,7 +167,7 @@ void World::update()
                 float blockPosX = (float)blockX * BLOCK_SIZE;
                 float blockPosY = (float)y * BLOCK_SIZE;
 
-                if (CheckCollisionRecs({blockPosX, blockPosY, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}))
+                if (CheckCollisionRecs({blockPosX, blockPosY, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}) && blocos[y][blockX] != nullptr)
                 {
                     i->pos.y--;
                 }
@@ -170,8 +182,6 @@ void World::update()
 
 void World::draw()
 {
-    player->draw();
-
     for (int x = posMap1.x; x <= posMap2.x; x++)
     {
         for (int y = posMap1.y; y <= posMap2.y; y++)
@@ -192,6 +202,7 @@ void World::draw()
     {
         DrawTexturePro(i->textura, {0, 0, 32, 32}, {i->pos.x, i->pos.y, 16, 16}, {0, 0}, 0, WHITE);
     }
+    player->draw();
 }
 
 void World::beginDraw()

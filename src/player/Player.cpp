@@ -18,12 +18,12 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
     Vector2 newPos = pos;
     float dt = GetFrameTime();
 
-    if (IsKeyDown(KEY_A))
+    if (IsKeyDown(KEY_A) && !inventario->estaAberto)
     {
         newPos.x -= velx * dt;
     }
 
-    if (IsKeyDown(KEY_D))
+    if (IsKeyDown(KEY_D) && !inventario->estaAberto)
     {
         newPos.x += velx * dt;
     }
@@ -37,7 +37,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
         pos.x = newPos.x;
     }
 
-    if (onGround && IsKeyDown(KEY_SPACE))
+    if (onGround && IsKeyDown(KEY_SPACE) && !inventario->estaAberto)
     {
         vely = -jumpForce;
     }
@@ -64,7 +64,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
         onGround = false;
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !inventario->estaAberto)
     {
         Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), c);
         Vector2 mouseBlock = {mouseWorld.x / BLOCK_SIZE, mouseWorld.y / BLOCK_SIZE};
@@ -91,7 +91,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
         }
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !inventario->estaAberto)
     {
         Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), c);
         Vector2 mouseBlock = {(float)(int)(mouseWorld.x / BLOCK_SIZE), (float)(int)(mouseWorld.y / BLOCK_SIZE)};
@@ -105,8 +105,41 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
                     Type t = inventario->botarIten();
 
                     BL[(int)mouseBlock.y][(int)mouseBlock.x] = std::make_unique<Bloco>(t);
+                    BL[(int)mouseBlock.y][(int)mouseBlock.x]->comColisão = true;
                 }
             }
+        }
+    }
+
+    if (IsKeyPressed(KEY_Q)  && !inventario->estaAberto)
+    {
+        Type t = inventario->botarIten();
+        if (t != Type::AR)
+        {
+            std::unique_ptr<Iten> i = std::make_unique<Iten>(t);
+
+            Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), c);
+
+            if (mouseWorld.x > pos.x)
+            {
+                i->pos = pos;
+                i->pos.x += 100;
+            }
+            else
+            {
+                i->pos = pos;
+                i->pos.x -= 100;
+            }
+            if (i->pos.x < 0)
+            {
+                i->pos.x = 0;
+            }
+            if (i->pos.x >= (WORLD_SIZE - 1) * BLOCK_SIZE)
+            {
+                i->pos.x = (WORLD_SIZE - 1) * BLOCK_SIZE - 30;
+            }
+
+            ITS.push_back(std::move(i));
         }
     }
 
@@ -133,7 +166,7 @@ bool Player::colision(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SI
                 continue;
             }
 
-            if (BL[y][x]->desenhavel && CheckCollisionRecs({(float)x * BLOCK_SIZE, (float)y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE}, {pos.x + 2, pos.y, 28, 63}))
+            if (BL[y][x]->desenhavel && BL[y][x]->comColisão && CheckCollisionRecs({(float)x * BLOCK_SIZE, (float)y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE}, {pos.x + 2, pos.y, 28, 63}))
             {
                 return true;
             }

@@ -19,7 +19,7 @@ public:
 
     std::unique_ptr<Bloco> blocos[WORLD_SIZE][WORLD_SIZE];
     void generate(Vector2 RT, Vector2 LB, int seed);
-    void generateThrees(Vector2 initial_point);
+    void generateThrees(Vector2 initial_point, int tamanho);
     void update();
     void draw();
     void beginDraw();

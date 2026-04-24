@@ -1,4 +1,5 @@
 #include "./Inventario.hpp"
+#include <math.h>
 
 Inventario::Inventario()
 {
@@ -96,73 +97,133 @@ void Inventario::update()
 
     float widthW = GetScreenWidth();
     float heightW = GetScreenHeight();
+    // invX bar
     float hx = (widthW / 2.f) - (textura.width / 2.f);
+    // invy bar
     float hy = heightW - textura.height;
+
+    // outro
     float ax = (widthW / 2.f) - (outroInventario.width / 2.f);
+    // outro
     float ay = 150;
 
     Vector2 mousePos = GetMousePosition();
-
-    auto getSlot = [&]() -> int
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            Rectangle slot = {hx + i * 32.f, hy, 32, 32};
-            if (CheckCollisionPointRec(mousePos, slot))
-            {
-                return i;
-            }
-        }
-        for (int i = 10; i < 50; i++)
-        {
-            int col = (i - 10) % 10;
-            int row = (i - 10) / 10;
-            Rectangle slot = {ax + col * 32.f, ay + row * 32.f, 32, 32};
-            if (CheckCollisionPointRec(mousePos, slot))
-            {
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && dragIndex == -1)
-    {
-        int slot = getSlot();
-        if (slot != -1 && itens[slot] != nullptr)
-        {
-            dragIndex = slot;
-        }
-    }
+    dragPos = {0, 0};
 
     if (dragIndex != -1)
     {
         dragPos = mousePos;
     }
 
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && dragIndex != -1)
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        int dest = getSlot();
+        Rectangle bar = {hx, hy, textura.width, textura.height};
+        Rectangle outro = {ax, ay, outroInventario.width, outroInventario.height};
+        Rectangle mouseCol = {mousePos.x, mousePos.y, 1, 1};
 
-        if (dest != -1 && dest != dragIndex)
+        if (dragIndex == -1)
         {
-            if (itens[dest] == nullptr)
+            if (CheckCollisionRecs(mouseCol, outro))
             {
-                itens[dest] = std::move(itens[dragIndex]);
-            }
-            else if (itens[dest]->tipo == itens[dragIndex]->tipo)
-            {
-                int transfere = std::min(64 - itens[dest]->quantidade, itens[dragIndex]->quantidade);
-                itens[dest]->quantidade += transfere;
-                itens[dragIndex]->quantidade -= transfere;
+                int col = (mousePos.x - outro.x) / 32;
+                int row = (mousePos.y - outro.y) / 32;
+
+                for (int i = 10; i < 50; i++)
+                {
+                    int colI = (i - 10) % 10;
+                    int rowI = (i - 10) / 10;
+
+                    if (col == colI && row == rowI)
+                    {
+                        if (itens[i] != nullptr)
+                        {
+                            dragIndex = i;
+                        }
+
+                        break;
+                    }
+                }
             }
             else
             {
-                std::swap(itens[dragIndex], itens[dest]);
+                if (CheckCollisionRecs(mouseCol, bar))
+                {
+                    int iten = (mousePos.x - bar.x) / 32;
+                    if (itens[iten] != nullptr)
+                    {
+                        dragIndex = iten;
+                    }
+                }
             }
         }
+        else
+        {
+            if (CheckCollisionRecs(mouseCol, outro))
+            {
+                int col = (mousePos.x - outro.x) / 32;
+                int row = (mousePos.y - outro.y) / 32;
 
-        dragIndex = -1;
+                for (int i = 10; i < 50; i++)
+                {
+                    int colI = (i - 10) % 10;
+                    int rowI = (i - 10) / 10;
+
+                    if (col == colI && row == rowI)
+                    {
+                        if (itens[i] == nullptr)
+                        {
+                            itens[i] = std::move(itens[dragIndex]);
+                            itens[dragIndex] = nullptr;
+                        }
+                        else
+                        {
+                            if (itens[i]->tipo != itens[dragIndex]->tipo)
+                            {
+                                std::swap(itens[i], itens[dragIndex]);
+                            }
+                            else
+                            {
+                                while (itens[i]->quantidade < 64 && itens[dragIndex]->quantidade > 0)
+                                {
+                                    itens[i]->quantidade++;
+                                    itens[dragIndex]->quantidade--;
+                                }
+                            }
+                        }
+                        dragIndex = -1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (CheckCollisionRecs(mouseCol, bar))
+                {
+                    int iten = (mousePos.x - bar.x) / 32;
+                    if (itens[iten] == nullptr)
+                    {
+                        itens[iten] = std::move(itens[dragIndex]);
+                        itens[dragIndex] = nullptr;
+                    }
+                    else
+                    {
+                        if (itens[iten]->tipo != itens[dragIndex]->tipo)
+                        {
+                            std::swap(itens[iten], itens[dragIndex]);
+                        }
+                        else
+                        {
+                            while (itens[iten]->quantidade < 64 && itens[dragIndex]->quantidade > 0)
+                            {
+                                itens[iten]->quantidade++;
+                                itens[dragIndex]->quantidade--;
+                            }
+                        }
+                    }
+                    dragIndex = -1;
+                }
+            }
+        }
     }
 }
 

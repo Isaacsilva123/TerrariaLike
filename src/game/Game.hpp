@@ -1,12 +1,11 @@
 #pragma once
 #include "../interfaces/InterfaceDU.hpp"
-#include "../world/World.hpp"
+#include "../scenes/GameScene.hpp"
 
 class Game : public InterfaceDU
 {
 private:
-    Camera2D camera;
-    std::unique_ptr<World> world;
+    std::unique_ptr<GameScene> GS;
 
 public:
     Game();

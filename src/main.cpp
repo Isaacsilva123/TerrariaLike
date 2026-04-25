@@ -1,6 +1,9 @@
 #include <iostream>
 #include "./game/Game.hpp"
 
+#define RAYGUI_IMPLEMENTATION
+#include "includes/raygui.h"
+
 int main()
 {
 

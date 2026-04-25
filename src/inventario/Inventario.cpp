@@ -117,8 +117,8 @@ void Inventario::update()
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        Rectangle bar = {hx, hy, textura.width, textura.height};
-        Rectangle outro = {ax, ay, outroInventario.width, outroInventario.height};
+        Rectangle bar = {hx, hy, (float)textura.width, (float)textura.height};
+        Rectangle outro = {ax, ay, (float)outroInventario.width, (float)outroInventario.height};
         Rectangle mouseCol = {mousePos.x, mousePos.y, 1, 1};
 
         if (dragIndex == -1)

@@ -1,16 +1,32 @@
 #include "Game.hpp"
+#include "../utils/gameState/GameState.hpp"
 
 Game::Game()
 {
     GS = std::make_unique<GameScene>();
+    MIS = std::make_unique<MenuInitialScene>();
 }
 
 void Game::update()
 {
-    GS->update();
+    if (GameState::stt == STATE::GAME)
+    {
+        GS->update();
+    }else
+    {
+        MIS->update();
+    }
+    
 }
 
 void Game::draw()
 {
-    GS->draw();
+    if (GameState::stt == STATE::GAME)
+    {
+        GS->draw();
+    }else
+    {
+        MIS->draw();
+    }
+    
 }

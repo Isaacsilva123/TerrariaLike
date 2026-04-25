@@ -33,11 +33,12 @@ void World::generate(Vector2 RT, Vector2 LB, int seed)
                     if ((x * 7 + seed * 13) % 3)
                     {
                         t = 9;
-                    }else if ((x * 7 + seed * 13) % 7)
+                    }
+                    else if ((x * 7 + seed * 13) % 7)
                     {
                         t = 20;
-                    }                    
-                    
+                    }
+
                     generateThrees({(float)x, (float)y}, t);
                 }
             }
@@ -137,45 +138,49 @@ void World::update()
     player->update(posMap1, posMap2, blocos, c, itens);
     c.target = player->pos;
 
-    for (const auto &i : itens)
+    for (const auto &item : itens)
     {
+        item->life -= dt;
 
-        i->life -= dt;
+        float tileX = item->pos.x / BLOCK_SIZE;
+        float tileY = item->pos.y / BLOCK_SIZE;
 
-        if (!(i->pos.x / BLOCK_SIZE >= posMap1.x && i->pos.x / BLOCK_SIZE <= posMap2.x))
+        bool foraDoMapaX = tileX < posMap1.x || tileX > posMap2.x;
+        bool foraDoMapaY = tileY < posMap1.y || tileY > posMap2.y;
+
+        if (foraDoMapaX || foraDoMapaY)
         {
             continue;
         }
 
-        if (!(i->pos.y / BLOCK_SIZE >= posMap1.y && i->pos.y / BLOCK_SIZE <= posMap2.y))
-        {
-            continue;
-        }
+        int blockX = (int)tileX;
+        int blockYStart = (int)tileY;
 
-        int blockX = (int)(i->pos.x / BLOCK_SIZE);
-        int blockYStart = (int)(i->pos.y / BLOCK_SIZE);
+        bool colidiu = false;
 
-        if (blockX >= posMap1.x && blockX <= posMap2.x)
+        for (int y = blockYStart; y <= (int)posMap2.y; y++)
         {
-            for (int y = blockYStart; y <= posMap2.y; y++)
+            std::unique_ptr<Bloco> &bloco = blocos[y][blockX];
+
+            if (!bloco || !bloco->desenhavel)
             {
-                if (y < posMap1.y || !blocos[y][blockX]->desenhavel)
-                {
-                    continue;
-                }
-
-                float blockPosX = (float)blockX * BLOCK_SIZE;
-                float blockPosY = (float)y * BLOCK_SIZE;
-
-                if (CheckCollisionRecs({blockPosX, blockPosY, BLOCK_SIZE, BLOCK_SIZE}, {i->pos.x, i->pos.y, 16, 16}) && blocos[y][blockX] != nullptr)
-                {
-                    i->pos.y--;
-                }
-                else
-                {
-                    i->pos.y += 30 * dt;
-                }
+                continue;
             }
+
+            Rectangle areaBloco = {(float)blockX * BLOCK_SIZE, (float)y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE};
+            Rectangle areaItem = {item->pos.x, item->pos.y, 16, 16};
+
+            if (bloco->comColisão && CheckCollisionRecs(areaBloco, areaItem))
+            {
+                item->pos.y--;
+                colidiu = true;
+                break;
+            }
+        }
+
+        if (!colidiu)
+        {
+            item->pos.y += 30 * dt;
         }
     }
 }

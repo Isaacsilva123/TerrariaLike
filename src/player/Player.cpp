@@ -2,6 +2,7 @@
 #include "../utils/Texturas.hpp"
 #include <math.h>
 #include <algorithm>
+#include "../utils/data/Bd.hpp"
 
 Player::Player()
 {
@@ -87,6 +88,12 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo = Type::AR;
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->textura = {};
                 BL[(int)mouseBlock.y][(int)mouseBlock.x]->rigidez = 0;
+
+                WorldNow w;
+                w.x = (int)mouseBlock.x;
+                w.y = (int)mouseBlock.y;
+                w.t = Type::AR;
+                Bd::blocks.push_back(w);
             }
         }
     }
@@ -106,12 +113,18 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
 
                     BL[(int)mouseBlock.y][(int)mouseBlock.x] = std::make_unique<Bloco>(t);
                     BL[(int)mouseBlock.y][(int)mouseBlock.x]->comColisão = true;
+
+                    WorldNow w;
+                    w.x = (int)mouseBlock.x;
+                    w.y = (int)mouseBlock.y;
+                    w.t = t;
+                    Bd::blocks.push_back(w);
                 }
             }
         }
     }
 
-    if (IsKeyPressed(KEY_Q)  && !inventario->estaAberto)
+    if (IsKeyPressed(KEY_Q) && !inventario->estaAberto)
     {
         Type t = inventario->botarIten();
         if (t != Type::AR)

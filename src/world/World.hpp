@@ -13,7 +13,7 @@ private:
     std::vector<std::unique_ptr<Iten>> itens;
     Vector2 posMap1;
     Vector2 posMap2;
-
+    int seed;
 public:
     World(Camera2D &c);
 

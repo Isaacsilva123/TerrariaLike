@@ -1,5 +1,6 @@
 #include <iostream>
 #include "./game/Game.hpp"
+#include "./utils/data/Bd.hpp"
 
 #define RAYGUI_IMPLEMENTATION
 #include "includes/raygui.h"
@@ -16,6 +17,11 @@ int main()
     {
         game->update();
         game->draw();
+    }
+
+    if (Bd::leu)
+    {
+        Bd::save();
     }
 
     Texturas::UnloadALL();

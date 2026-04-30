@@ -1,4 +1,5 @@
 #include "./World.hpp"
+#include "../utils/data/Bd.hpp"
 #include <math.h>
 #include <cstdlib>
 #include <ctime>
@@ -90,6 +91,16 @@ void World::generateThrees(Vector2 initial_point, int tamanho)
 
 void World::update()
 {
+    if (!Bd::leu)
+    {
+        seed = Bd::seed;
+        for (auto &b : Bd::blocks)
+        {
+            blocos[(int)b.y][(int)b.x] = std::make_unique<Bloco>(b.t);
+        }
+        Bd::leu = true;
+    }
+
     float dt = GetFrameTime();
     posMap1 = {0, 0};
     posMap1 = GetScreenToWorld2D(posMap1, c);

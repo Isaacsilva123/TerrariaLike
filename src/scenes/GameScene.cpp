@@ -41,6 +41,8 @@ void GameScene::update()
             Bd::itens[i] = nullptr;
         }
 
+        Bd::blocks = {};
+
         Bd::leu = false;
         world = nullptr;
         GameState::stt = STATE::MENUI;

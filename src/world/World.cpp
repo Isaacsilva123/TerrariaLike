@@ -6,9 +6,6 @@
 
 World::World(Camera2D &c) : c(c)
 {
-    int surface = (WORLD_SIZE / 2) + (10 * sinf(0 * 0.051f + seed)) + ((5 * sinf(0 * 0.151f + seed)));
-    surface *= BLOCK_SIZE;
-    player = std::make_unique<Player>(Vector2{0, (float)surface - 560});
     srand(time(0));
 }
 
@@ -95,12 +92,21 @@ void World::update()
 {
     if (!Bd::leu)
     {
+
         seed = Bd::seed;
         for (auto &b : Bd::blocks)
         {
             blocos[(int)b.y][(int)b.x] = std::make_unique<Bloco>(b.t);
         }
         Bd::leu = true;
+        int spawnX = WORLD_SIZE / 2;
+
+        int surface = (WORLD_SIZE / 2) +
+                      (10 * sinf(spawnX * 0.051f + seed)) +
+                      (5 * sinf(spawnX * 0.151f + seed));
+
+        player = std::make_unique<Player>(
+            Vector2{(float)spawnX * BLOCK_SIZE, (float)surface * BLOCK_SIZE - 560});
     }
 
     float dt = GetFrameTime();

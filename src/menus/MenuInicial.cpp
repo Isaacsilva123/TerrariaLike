@@ -17,7 +17,6 @@ MenuInicial::MenuInicial()
     nomeDigitado = true;
 
     ler();
-    SetRandomSeed(9910203);
 }
 
 void MenuInicial::ler()
@@ -54,7 +53,7 @@ void MenuInicial::draw()
             0,
             0,
             full.width,
-            40 + (float)fileNames.size() * 35};
+            40 + (float)fileNames.size() * 40};
 
         Rectangle view;
 
@@ -86,18 +85,19 @@ void MenuInicial::draw()
             if (GuiButton(item, fileNames[i].c_str()))
             {
                 std::string path = "mundos/" + fileNames[i] + ".bin";
+                Bd::file = path;
                 Bd::load(path);
                 GameState::stt = STATE::GAME;
             }
         }
 
         EndScissorMode();
-        
+
         if (!nomeDigitado)
         {
             if (GuiTextBox(bounds, nomeDoMundo, 128, !nomeDigitado))
             {
-                Bd::seed = GetRandomValue(0, 99999);
+                Bd::seed = rand() % 1000000;
                 Bd::file = TextFormat("mundos/%s.bin", nomeDoMundo);
                 nomeDoMundo[0] = '\0';
                 Bd::save();

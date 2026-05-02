@@ -9,8 +9,6 @@ std::shared_ptr<Iten> Bd::itens[50] = {};
 
 void Bd::load(std::string &file)
 {
-    Bd::file = file;
-
     std::ifstream arquive(file, std::ios::binary);
     if (!arquive)
     {

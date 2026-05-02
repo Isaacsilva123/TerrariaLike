@@ -35,6 +35,12 @@ void GameScene::update()
         }
 
         Bd::save();
+
+        for (size_t i = 0; i < 50; i++)
+        {
+            Bd::itens[i] = nullptr;
+        }
+
         Bd::leu = false;
         world = nullptr;
         GameState::stt = STATE::MENUI;
@@ -50,6 +56,6 @@ void GameScene::draw()
 
     EndMode2D();
     world->beginDraw();
-    DrawFPS(10, 10);
+    // DrawFPS(10, 10);
     EndDrawing();
 }

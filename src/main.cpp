@@ -21,6 +21,11 @@ int main()
 
     if (Bd::leu)
     {
+        for (int i = 0; i < 50; i++)
+        {
+            Bd::itens[i] = game->GS->world->player->inventario->itens[i];
+        }
+
         Bd::save();
     }
 

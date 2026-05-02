@@ -6,7 +6,9 @@
 
 World::World(Camera2D &c) : c(c)
 {
-    player = std::make_unique<Player>();
+    int surface = (WORLD_SIZE / 2) + (10 * sinf(0 * 0.051f + seed)) + ((5 * sinf(0 * 0.151f + seed)));
+    surface *= BLOCK_SIZE;
+    player = std::make_unique<Player>(Vector2{0, (float)surface - 560});
     srand(time(0));
 }
 
@@ -144,7 +146,7 @@ void World::update()
         posMap2.y = WORLD_SIZE - 1;
     }
 
-    generate(posMap1, posMap2, 2000);
+    generate(posMap1, posMap2, seed);
 
     player->update(posMap1, posMap2, blocos, c, itens);
     c.target = player->pos;

@@ -8,11 +8,11 @@ class Inventario : public InterfaceDU
 {
 private:
     Texture2D textura, selected, outroInventario;
-    std::unique_ptr<Iten> itens[50];
     int state, dragIndex;
     Vector2 dragPos;
 
 public:
+    std::shared_ptr<Iten> itens[50];
     bool estaAberto;
     Inventario();
     bool isNull();

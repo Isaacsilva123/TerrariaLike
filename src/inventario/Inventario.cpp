@@ -35,6 +35,7 @@ bool Inventario::adicionarItem(Type t)
         if (itens[i]->tipo == t && itens[i]->quantidade < 64)
         {
             itens[i]->quantidade++;
+            
             return true;
         }
     }
@@ -43,7 +44,7 @@ bool Inventario::adicionarItem(Type t)
     {
         if (itens[i] == nullptr)
         {
-            itens[i] = std::make_unique<Iten>(t);
+            itens[i] = std::make_shared<Iten>(t);
             return true;
         }
     }

@@ -1,17 +1,20 @@
 #include "Player.hpp"
 #include "../utils/Texturas.hpp"
+#include "../utils/data/Bd.hpp"
 #include <math.h>
 #include <algorithm>
-#include "../utils/data/Bd.hpp"
 
-Player::Player()
+Player::Player(Vector2 p)
 {
     textura = Texturas::player;
     inventario = std::make_unique<Inventario>();
-    pos = {0, 0};
+    pos = p;
+    for(int i = 0; i < 50; i++){
+        inventario->itens[i] = Bd::itens[i];
+    }
 }
 
-void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE][WORLD_SIZE], Camera2D &c, std::vector<std::unique_ptr<Iten>> &ITS)
+void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE][WORLD_SIZE], Camera2D &c, std::vector<std::shared_ptr<Iten>> &ITS)
 {
 
     inventario->update();
@@ -79,7 +82,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
                 {
                     Type tipo = BL[(int)mouseBlock.y][(int)mouseBlock.x]->tipo;
 
-                    std::unique_ptr<Iten> iten = std::make_unique<Iten>(tipo);
+                    std::shared_ptr<Iten> iten = std::make_shared<Iten>(tipo);
                     iten->pos = {(float)((int)mouseBlock.x * BLOCK_SIZE + 8), (float)((int)mouseBlock.y * BLOCK_SIZE + 8)};
                     ITS.push_back(std::move(iten));
                 }
@@ -129,7 +132,7 @@ void Player::update(Vector2 LT, Vector2 RB, std::unique_ptr<Bloco> BL[WORLD_SIZE
         Type t = inventario->botarIten();
         if (t != Type::AR)
         {
-            std::unique_ptr<Iten> i = std::make_unique<Iten>(t);
+            std::shared_ptr<Iten> i = std::make_shared<Iten>(t);
 
             Vector2 mouseWorld = GetScreenToWorld2D(GetMousePosition(), c);
 

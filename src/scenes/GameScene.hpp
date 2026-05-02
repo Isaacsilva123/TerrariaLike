@@ -6,11 +6,11 @@ class GameScene : public InterfaceDU
 {
 private:
     Camera2D camera;
-    std::unique_ptr<World> world;
 
 public:
     GameScene();
-    
+
+    std::unique_ptr<World> world;
     void draw();
     void update();
 };

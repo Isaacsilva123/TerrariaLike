@@ -5,11 +5,10 @@
 
 class Game : public InterfaceDU
 {
-private:
+public:
     std::unique_ptr<GameScene> GS;
     std::unique_ptr<MenuInitialScene> MIS;
 
-public:
     Game();
 
     void update();

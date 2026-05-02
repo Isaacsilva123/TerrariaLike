@@ -14,8 +14,10 @@ MenuInicial::MenuInicial()
     float y = (GetScreenHeight() / 2.f) - (height / 2.f);
 
     bounds = {x, y, width, height};
+    nomeDigitado = true;
 
     ler();
+    SetRandomSeed(9910203);
 }
 
 void MenuInicial::ler()
@@ -36,8 +38,6 @@ void MenuInicial::ler()
 
 void MenuInicial::draw()
 {
-    Rectangle full = {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()};
-
     if (GameState::stt == STATE::MENUI)
     {
         if (GuiButton(bounds, "Play"))
@@ -48,6 +48,7 @@ void MenuInicial::draw()
     }
     else
     {
+        Rectangle full = {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()};
 
         Rectangle content = {
             0,
@@ -62,31 +63,24 @@ void MenuInicial::draw()
         BeginScissorMode(view.x, view.y, view.width, view.height);
 
         Rectangle criarBtn = {
-            view.x + 10,
+            view.x + 15,
             view.y + 5,
-            view.width - 20,
+            view.width - 30,
             30};
 
         if (GuiButton(criarBtn, "Criar Mundo"))
         {
-            Bd::seed = rand() % 2000;
-            Bd::file = TextFormat("mundos/mundo%i.bin", (int)fileNames.size());
-            Bd::save();
-
-            ler();
+            nomeDigitado = false;
         }
 
-        int start = scroll.y / 35;
-        int end = start + (view.height / 35) + 2;
-
-        for (int i = start; i < end && i < fileNames.size(); i++)
+        for (int i = 0; i < (int)fileNames.size(); i++)
         {
-            float y = view.y + 40 + i * 35 - scroll.y;
+            float y = view.y + 40 + i * 40 + scroll.y;
 
             Rectangle item = {
-                view.x + 10,
+                view.x + 15,
                 y,
-                view.width - 20,
+                view.width - 30,
                 30};
 
             if (GuiButton(item, fileNames[i].c_str()))
@@ -98,5 +92,19 @@ void MenuInicial::draw()
         }
 
         EndScissorMode();
+        
+        if (!nomeDigitado)
+        {
+            if (GuiTextBox(bounds, nomeDoMundo, 128, !nomeDigitado))
+            {
+                Bd::seed = GetRandomValue(0, 99999);
+                Bd::file = TextFormat("mundos/%s.bin", nomeDoMundo);
+                nomeDoMundo[0] = '\0';
+                Bd::save();
+
+                ler();
+                nomeDigitado = true;
+            }
+        }
     }
 }

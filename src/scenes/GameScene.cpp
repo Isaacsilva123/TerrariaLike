@@ -1,4 +1,6 @@
 #include "GameScene.hpp"
+#include "../utils/gameState/GameState.hpp"
+#include "../utils/data/Bd.hpp"
 #include <cmath>
 #include <time.h>
 
@@ -10,13 +12,33 @@ GameScene::GameScene()
     camera.offset = {GetScreenWidth() / 2.f, GetScreenHeight() / 2.f};
     camera.target = {WORLD_SIZE / 2.f * BLOCK_SIZE, 0};
     camera.zoom = 1.f;
-
-    world = std::make_unique<World>(camera);
 }
 
 void GameScene::update()
 {
+    if (world == nullptr)
+    {
+        camera = {};
+        camera.rotation = 0;
+        camera.offset = {GetScreenWidth() / 2.f, GetScreenHeight() / 2.f};
+        camera.target = {WORLD_SIZE / 2.f * BLOCK_SIZE, 0};
+        camera.zoom = 1.f;
+        world = std::make_unique<World>(camera);
+    }
+
     world->update();
+    if (IsKeyDown(KEY_R))
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            Bd::itens[i] = world->player->inventario->itens[i];
+        }
+
+        Bd::save();
+        Bd::leu = false;
+        world = nullptr;
+        GameState::stt = STATE::MENUI;
+    }
 }
 
 void GameScene::draw()
